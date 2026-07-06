@@ -1,0 +1,69 @@
+body {
+    background-color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    overflow-x: hidden;
+}
+
+.font-cursive { 
+    font-family: 'Great+Vibes', cursive; 
+}
+
+.font-serif-elegant { 
+    font-family: 'Cinzel', serif; 
+}
+
+/* Transição suave entre telas */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    pointer-events: none;
+}
+
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* Estilo das Iniciais Douradas */
+.initials-gold {
+    background: linear-gradient(to bottom, #d4af37 0%, #f9e29c 50%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+/* Checklist Customizado */
+.checkbox-custom {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d4af37;
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.checkbox-custom:checked {
+    background-color: #d4af37;
+}
+
+.checkbox-custom:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Animação do laço (opcional, baseada na classe mencionada no HTML) */
+.bow-animation {
+    transition: transform 0.3s ease-in-out;
+}
+
+.bow-animation:hover {
+    transform: scale(1.05);
+}
