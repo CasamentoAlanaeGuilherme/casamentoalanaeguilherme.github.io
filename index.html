@@ -1,65 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<h3>Aguardando Convite...</h3>
-<script>
- const API_URL = "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
- // Captura o ?id= da URL da página
- const urlParams = new URLSearchParams(window.location.search);
- const idFamilia = urlParams.get('id');
- let listaConvidados = [];
- window.addEventListener('DOMContentLoaded', () => {
- if (!idFamilia) {
- document.body.innerHTML = "<h1>Convite Inválido</h1><p>Por favor, utilize olink completo enviado pelos noivos.</p>";
- return;
- }
- carregarConvidados();
- });
- function carregarConvidados() {
- fetch(`${API_URL}?id=${idFamilia}`)
- .then(res => res.json())
- .then(data => {
- listaConvidados = data;
- renderizarFormulario();
- })
- .catch(err => console.error("Erro ao buscar dados:", err));
- }
- function renderizarFormulario() {
- if (listaConvidados.length === 0) {
- document.body.innerHTML = "<h1>Família não encontrada</h1>";
- return;
- }
- let html = "<h2>Confirmação de Presença</h2><form id='rsvp-form'>";
- listaConvidados.forEach((c, i) => {
- const checked = c.confirmado === "Sim" ? "checked" : "";
- html += `
- <div style='margin-bottom: 10px;'>
- <label>
- <input type='checkbox' id='chk-${i}' ${checked}> ${c.nome}
- </label>
- </div>
- `;
- });
- html += "<button type='button' onclick='enviarRSVP()'>Confirmar Presença</button></form>";
- document.body.innerHTML = html;
- }
- function enviarRSVP() {
- // Atualiza a estrutura local baseado nos checkboxes marcados
- listaConvidados.forEach((c, i) => {
- const chk = document.getElementById(`chk-${i}`);
- c.confirmado = chk.checked ? "Sim" : "Não";
- });
- // Envia as atualizações via POST de forma assíncrona
- fetch(API_URL, {
- method: "POST",
- mode: "no-cors", // Evita problemas de CORS no redirecionamento do Apps Script
- headers: { "Content-Type": "application/json" },
- body: JSON.stringify(listaConvidados)
- })
- .then(() => {
- document.body.innerHTML = "<h2>Obrigado!</h2><p>Sua resposta foi salva com sucesso.</p>";
- })
- .catch(err => alert("Erro ao salvar confirmação. Tente novamente."));
- }
-</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite de Casamento | Alana & Guilherme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .font-cursive { font-family: 'Great+Vibes', cursive; }
+        .font-serif-elegant { font-family: 'Cinzel', serif; }
+        
+        /* Animação do Laço */
+        @keyframes bow-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .bow-animation {
+            animation: bow-pulse 3s infinite ease-in-out;
+        }
+        
+        /* Transição suave entre telas */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: none;
+        }
+        .fade-in {
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        /* Estilo das Iniciais Douradas */
+        .initials-gold {
+            background: linear-gradient(to bottom, #d4af37 0%, #f9e29c 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* Checklist Customizado */
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d4af37;
+            border-radius: 4px;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .checkbox-custom:checked {
+            background-color: #d4af37;
+        }
+        .checkbox-custom:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body class="m-0 p-0 flex flex-col items-center">
+
+    <!-- TELA INICIAL (SPLASH SCREEN) -->
+    <div id="splash-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6 text-center">
+        <div class="mb-12">
+            <h1 class="font-serif-elegant text-5xl initials-gold tracking-widest">A & G</h1>
+        </div>
+        
+        <div class="relative cursor-pointer bow-animation" onclick="openInvitation()">
+            <img src="Imagens/laco.png" alt="Laço Branco" class="w-64 md:w-80 h-auto drop-shadow-sm">
+        </div>
+        
+        <div class="mt-12">
+            <p class="font-light tracking-[0.3em] text-gray-400 uppercase text-sm animate-pulse">Toque para abrir</p>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO DO CONVITE (INICIALMENTE OCULTO) -->
+    <div id="main-content" class="hidden w-full max-w-md bg-white opacity-0 transition-opacity duration-1000">
+        
+        <!-- Imagem Topo: Mãos -->
+        <section class="w-full">
+            <img src="Imagens/maos.JPG" alt="Mãos dos Noivos" class="w-full h-auto">
+        </section>
+
+        <!-- Versículo -->
+        <section class="px-8 py-12 text-center">
+            <p class="text-xs tracking-widest leading-relaxed text-gray-600 uppercase">
+                "Assim eles já não são dois, mas sim uma só carne. Portanto o que Deus uniu, ninguém separe."
+                <br>
+                <span class="font-bold mt-2 block">Mateus 19:6</span>
+            </p>
+        </section>
+
+        <!-- Nomes dos Noivos -->
+        <section class="text-center py-6">
+            <h2 class="font-cursive text-6xl text-[#d4af37]">Alana & Guilherme</h2>
+        </section>
+
+        <!-- Convite Texto -->
+        <section class="px-8 py-8 text-center border-y border-gray-100 mx-8">
+            <p class="text-[10px] tracking-[0.2em] text-gray-500 uppercase mb-6">Com a bênção de seus pais, convidam para o seu casamento</p>
+            <div class="flex flex-col items-center justify-center space-y-2">
+                <p class="font-serif-elegant text-2xl tracking-widest">13 DEZ | 16H</p>
+                <div class="w-8 h-[1px] bg-[#d4af37]"></div>
+                <p class="font-serif-elegant text-lg tracking-widest">CAPELA RAINHA DA PAZ</p>
+                <p class="text-xs tracking-widest text-gray-500 uppercase">Santa Maria - DF</p>
+            </div>
+        </section>
+
+        <!-- Imagem Meio: Abraçados -->
+        <section class="w-full py-10 px-4">
+            <img src="Imagens/abracados.jpeg" alt="Noivos Abraçados" class="w-full h-auto rounded-sm shadow-lg">
+        </section>
+
+        <!-- RSVP / Lista de Convidados -->
+        <section id="rsvp-section" class="px-8 py-12 bg-gray-50">
+            <div class="text-center mb-8">
+                <h3 class="font-serif-elegant text-xl tracking-widest uppercase mb-2">Confirmação de Presença</h3>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Por favor, selecione quem comparecerá:</p>
+            </div>
+            
+            <div id="loading-guests" class="text-center py-4">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]"></div>
+            </div>
+
+            <form id="rsvp-form" class="space-y-4 hidden">
+                <div id="guest-list" class="space-y-4">
+                    <!-- Gerado dinamicamente -->
+                </div>
+                
+                <button type="button" onclick="enviarRSVP()" id="btn-confirmar"
+                    class="w-full mt-8 bg-[#d4af37] text-white py-4 rounded-sm font-serif-elegant tracking-[0.2em] uppercase text-sm hover:bg-[#c49b2c] transition-colors shadow-md">
+                    Confirmar Presença
+                </button>
+            </form>
+
+            <div id="success-message" class="hidden text-center py-8">
+                <p class="font-cursive text-4xl text-[#d4af37] mb-2">Obrigado!</p>
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Sua resposta foi salva com sucesso.</p>
+            </div>
+        </section>
+
+        <!-- Imagem Final: Beijando na Ponte -->
+        <section class="w-full pt-10 pb-20 px-4">
+            <img src="Imagens/beijando_na_ponte.JPG" alt="Noivos se Beijando" class="w-full h-auto rounded-sm shadow-lg">
+        </section>
+
+        <!-- Rodapé Minimalista -->
+        <footer class="text-center pb-12 opacity-30">
+            <p class="text-[8px] tracking-[0.3em] uppercase">A & G • 2026</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFamilia = urlParams.get('id');
+        let listaConvidados = [];
+
+        // Função para abrir o convite
+        function openInvitation() {
+            const splash = document.getElementById('splash-screen');
+            const main = document.getElementById('main-content');
+            
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                main.classList.remove('hidden');
+                setTimeout(() => {
+                    main.classList.add('fade-in');
+                    main.style.opacity = '1';
+                }, 50);
+            }, 800);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!idFamilia) {
+                document.getElementById('loading-guests').innerHTML = "<p class='text-red-400 text-xs uppercase'>Link Inválido</p>";
+                return;
+            }
+            carregarConvidados();
+        });
+
+        function carregarConvidados() {
+            fetch(`${API_URL}?id=${idFamilia}`)
+                .then(res => res.json())
+                .then(data => {
+                    listaConvidados = data;
+                    renderizarFormulario();
+                })
+                .catch(err => {
+                    console.error("Erro ao buscar dados:", err);
+                    document.getElementById('loading-guests').innerHTML = "<p class='text-red-400 text-xs uppercase'>Erro ao carregar dados</p>";
+                });
+        }
+
+        function renderizarFormulario() {
+            const guestListDiv = document.getElementById('guest-list');
+            const loadingDiv = document.getElementById('loading-guests');
+            const form = document.getElementById('rsvp-form');
+
+            if (listaConvidados.length === 0) {
+                loadingDiv.innerHTML = "<p class='text-gray-400 text-xs uppercase'>Família não encontrada</p>";
+                return;
+            }
+
+            loadingDiv.classList.add('hidden');
+            form.classList.remove('hidden');
+
+            guestListDiv.innerHTML = '';
+            listaConvidados.forEach((c, i) => {
+                const checked = c.confirmado === "Sim" ? "checked" : "";
+                const guestItem = document.createElement('div');
+                guestItem.className = "flex items-center justify-between p-4 bg-white border border-gray-100 rounded-sm shadow-sm";
+                guestItem.innerHTML = `
+                    <span class="text-sm font-light text-gray-700 uppercase tracking-wider">${c.nome}</span>
+                    <input type="checkbox" id="chk-${i}" ${checked} class="checkbox-custom">
+                `;
+                guestListDiv.appendChild(guestItem);
+            });
+        }
+
+        function enviarRSVP() {
+            const btn = document.getElementById('btn-confirmar');
+            const originalText = btn.innerText;
+            btn.innerText = "Salvando...";
+            btn.disabled = true;
+
+            // Atualiza a estrutura local baseado nos checkboxes marcados
+            listaConvidados.forEach((c, i) => {
+                const chk = document.getElementById(`chk-${i}`);
+                c.confirmado = chk.checked ? "Sim" : "Não";
+            });
+
+            // Envia as atualizações via POST
+            fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(listaConvidados)
+            })
+            .then(() => {
+                document.getElementById('rsvp-form').classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+            })
+            .catch(err => {
+                alert("Erro ao salvar confirmação. Tente novamente.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        }
+    </script>
 </body>
 </html>
