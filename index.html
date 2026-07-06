@@ -17,15 +17,6 @@
         }
         .font-cursive { font-family: 'Great+Vibes', cursive; }
         .font-serif-elegant { font-family: 'Cinzel', serif; }
-        
-        /* Animação do Laço */
-        @keyframes bow-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .bow-animation {
-            animation: bow-pulse 3s infinite ease-in-out;
-        }
 
         /* Transição suave entre telas */
         .fade-out {
@@ -77,12 +68,11 @@
     <div id="splash-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6 text-center">
         <div class="mb-8">
             <!-- Ajustado o tamanho das iniciais AG.png para ficar mais elegante -->
-            <img src="Imagens/AG.png" alt="A & G" class="w-40 md:w-56 h-auto">
+            <img src="Imagens/A&G.png" alt="A & G" class="w-40 md:w-56 h-auto">
         </div>
         
         <div class="relative cursor-pointer bow-animation" onclick="openInvitation()">
-            <!-- Ajustado o tamanho do laço para não ficar gigantesco -->
-            <img src="Imagens/laco.png" alt="Laço Branco" class="w-56 md:w-72 h-auto drop-shadow-sm">
+            <img src="Imagens/laco.png" alt="Laço Branco" class="w-56 md:w-72 h-auto">
         </div>
         
         <div class="mt-12">
@@ -125,7 +115,7 @@
 
         <!-- Imagem Meio: Abraçados -->
         <section class="w-full py-10 px-4">
-            <img src="Imagens/abracados.jpeg" alt="Noivos Abraçados" class="w-full h-auto rounded-sm shadow-md">
+            <img src="Imagens/abracados.jpeg" alt="Noivos Abraçados" class="w-full h-auto">
         </section>
 
         <!-- RSVP / Lista de Convidados -->
