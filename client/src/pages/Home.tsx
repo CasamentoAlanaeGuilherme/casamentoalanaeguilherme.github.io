@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
 import OpeningPage from "./OpeningPage";
 import InvitationPage from "./InvitationPage";
 import ConfirmationPage from "./ConfirmationPage";
@@ -10,14 +9,14 @@ interface Guest {
   confirmado: string;
 }
 
-type PageState = "opening" | "invitation" | "confirmation" | "error";
+type PageState = "opening" | "invitation" | "confirmation" | "error" | "loading";
+
+const API_URL = "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
 
 export default function Home() {
-  const [, setLocation] = useLocation();
-  const [pageState, setPageState] = useState<PageState>("opening");
+  const [pageState, setPageState] = useState<PageState>("loading");
   const [familyId, setFamilyId] = useState<string>("");
   const [guests, setGuests] = useState<Guest[]>([]);
-  const [guestsData, setGuestsData] = useState<Record<string, Guest[]>>({});
 
   // Carregar dados de convidados e extrair ID da URL
   useEffect(() => {
@@ -32,15 +31,13 @@ export default function Home() {
 
     setFamilyId(id);
 
-    // Carregar dados de convidados do arquivo JSON
-    fetch("/guests.json")
+    // Carregar dados de convidados da API do Google Apps Script
+    fetch(`${API_URL}?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
-        setGuestsData(data);
-
-        // Buscar convidados da família
-        if (data[id]) {
-          setGuests(data[id]);
+        if (data && Array.isArray(data) && data.length > 0) {
+          setGuests(data);
+          setPageState("opening");
         } else {
           setPageState("error");
           toast.error("Família não encontrada. Verifique o link enviado.");
@@ -59,23 +56,18 @@ export default function Home() {
 
   const handleConfirmPresence = async (confirmations: Record<string, string>) => {
     try {
-      // Aqui você pode integrar com a API do Google Apps Script
-      // Por enquanto, apenas mostramos a página de confirmação
-      const API_URL =
-        "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
-
       const confirmationData = guests.map((guest) => ({
         nome: guest.nome,
         confirmado: confirmations[guest.nome] || "Não",
       }));
 
-      // Enviar para API (opcional - comentado por segurança)
-      // await fetch(API_URL, {
-      //   method: "POST",
-      //   mode: "no-cors",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(confirmationData),
-      // });
+      // Enviar para API via POST
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors", // Evita problemas de CORS no redirecionamento do Apps Script
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(confirmationData),
+      });
 
       setPageState("confirmation");
     } catch (error) {
@@ -83,6 +75,16 @@ export default function Home() {
       toast.error("Erro ao confirmar presença. Tente novamente.");
     }
   };
+
+  if (pageState === "loading") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+        <div className="wedding-font-display text-2xl text-gray-800 animate-pulse">
+          Carregando convite...
+        </div>
+      </div>
+    );
+  }
 
   if (pageState === "error") {
     return (
