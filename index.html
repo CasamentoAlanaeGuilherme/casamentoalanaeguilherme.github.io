@@ -18,15 +18,6 @@
         .font-cursive { font-family: 'Great+Vibes', cursive; }
         .font-serif-elegant { font-family: 'Cinzel', serif; }
         
-        /* Animação do Laço */
-        @keyframes bow-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .bow-animation {
-            animation: bow-pulse 3s infinite ease-in-out;
-        }
-        
         /* Transição suave entre telas */
         .fade-out {
             opacity: 0;
@@ -76,11 +67,11 @@
     <!-- TELA INICIAL (SPLASH SCREEN) -->
     <div id="splash-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6 text-center">
         <div class="mb-12">
-            <h1 class="font-serif-elegant text-5xl initials-gold tracking-widest">A & G</h1>
+            <img src="Imagens/AG.png" alt="A & G" class="w-48 md:w-64 h-auto">
         </div>
         
         <div class="relative cursor-pointer bow-animation" onclick="openInvitation()">
-            <img src="Imagens/laco.png" alt="Laço Branco" class="w-64 md:w-80 h-auto drop-shadow-sm">
+            <img src="Imagens/laco.png" alt="Laço Branco" class="w-full md:w-full h-auto">
         </div>
         
         <div class="mt-12">
@@ -97,7 +88,7 @@
         </section>
 
         <!-- Versículo -->
-        <section class="px-8 py-12 text-center">
+        <section class="px-12 py-16 text-center">
             <p class="text-xs tracking-widest leading-relaxed text-gray-600 uppercase">
                 "Assim eles já não são dois, mas sim uma só carne. Portanto o que Deus uniu, ninguém separe."
                 <br>
@@ -107,11 +98,11 @@
 
         <!-- Nomes dos Noivos -->
         <section class="text-center py-6">
-            <h2 class="font-cursive text-6xl text-[#d4af37]">Alana & Guilherme</h2>
+            <h2 class="font-serif-elegant text-6xl text-[#d4af37]">Alana & Guilherme</h2>
         </section>
 
         <!-- Convite Texto -->
-        <section class="px-8 py-8 text-center border-y border-gray-100 mx-8">
+        <section class="px-12 py-16 text-center border-y border-gray-100 mx-8">
             <p class="text-[10px] tracking-[0.2em] text-gray-500 uppercase mb-6">Com a bênção de seus pais, convidam para o seu casamento</p>
             <div class="flex flex-col items-center justify-center space-y-2">
                 <p class="font-serif-elegant text-2xl tracking-widest">13 DEZ | 16H</p>
@@ -123,11 +114,11 @@
 
         <!-- Imagem Meio: Abraçados -->
         <section class="w-full py-10 px-4">
-            <img src="Imagens/abracados.jpeg" alt="Noivos Abraçados" class="w-full h-auto rounded-sm shadow-lg">
+            <img src="Imagens/abracados.jpeg" alt="Noivos Abraçados" class="w-full h-auto">
         </section>
 
         <!-- RSVP / Lista de Convidados -->
-        <section id="rsvp-section" class="px-8 py-12 bg-gray-50">
+        <section id="rsvp-section" class="px-12 py-16 bg-gray-50">
             <div class="text-center mb-8">
                 <h3 class="font-serif-elegant text-xl tracking-widest uppercase mb-2">Confirmação de Presença</h3>
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest">Por favor, selecione quem comparecerá:</p>
