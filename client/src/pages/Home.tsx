@@ -17,9 +17,12 @@ export default function Home() {
   const [pageState, setPageState] = useState<PageState>("opening");
   const [familyId, setFamilyId] = useState<string>("");
   const [guests, setGuests] = useState<Guest[]>([]);
-  const [guestsData, setGuestsData] = useState<Record<string, Guest[]>>({});
 
-  // Carregar dados de convidados e extrair ID da URL
+  // API do Google Apps Script
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
+
+  // Carregar dados de convidados da API e extrair ID da URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
@@ -32,15 +35,13 @@ export default function Home() {
 
     setFamilyId(id);
 
-    // Carregar dados de convidados do arquivo JSON
-    fetch("/guests.json")
+    // Carregar dados de convidados da API do Google Apps Script
+    fetch(`${API_URL}?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
-        setGuestsData(data);
-
-        // Buscar convidados da família
-        if (data[id]) {
-          setGuests(data[id]);
+        // Verificar se a API retornou dados válidos
+        if (Array.isArray(data) && data.length > 0) {
+          setGuests(data);
         } else {
           setPageState("error");
           toast.error("Família não encontrada. Verifique o link enviado.");
@@ -59,24 +60,21 @@ export default function Home() {
 
   const handleConfirmPresence = async (confirmations: Record<string, string>) => {
     try {
-      // Aqui você pode integrar com a API do Google Apps Script
-      // Por enquanto, apenas mostramos a página de confirmação
-      const API_URL =
-        "https://script.google.com/macros/s/AKfycbzIw98kEl0C_Zy1IwK6ATg7lH_41IyZPbeORMIimR9SGG8V7WHkxkLbxDOo4n5gwK9O/exec";
-
+      // Preparar dados de confirmação
       const confirmationData = guests.map((guest) => ({
         nome: guest.nome,
         confirmado: confirmations[guest.nome] || "Não",
       }));
 
-      // Enviar para API (opcional - comentado por segurança)
-      // await fetch(API_URL, {
-      //   method: "POST",
-      //   mode: "no-cors",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(confirmationData),
-      // });
+      // Enviar para API do Google Apps Script
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors", // Evita problemas de CORS no redirecionamento do Apps Script
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(confirmationData),
+      });
 
+      // Mostrar página de confirmação após enviar
       setPageState("confirmation");
     } catch (error) {
       console.error("Erro ao confirmar presença:", error);
