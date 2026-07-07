@@ -42,7 +42,7 @@ function carregarConvidados() {
             console.error("Erro ao buscar dados:", err);
             const loadingGuests = document.getElementById('loading-guests');
             if (loadingGuests) {
-                loadingGuests.innerHTML = "<p class='text-red-400 text-xs uppercase'>Erro ao carregar dados</p>";
+                loadingGuests.innerHTML = "<p class='text-red-400 text-xs uppercase'>Erro ao carregar dados. Tente recarregar a página.</p>";
             }
         });
 }
