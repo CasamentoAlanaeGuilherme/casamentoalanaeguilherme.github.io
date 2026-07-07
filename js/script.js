@@ -75,6 +75,21 @@ function renderizarFormulario() {
     });
 }
 
+function abrirModal() {
+    document.getElementById('confirmation-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Previne scroll ao abrir modal
+}
+
+function fecharModal() {
+    document.getElementById('confirmation-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function confirmarEnvio() {
+    fecharModal();
+    enviarRSVP();
+}
+
 function enviarRSVP() {
     const btn = document.getElementById('btn-confirmar');
     const rsvpForm = document.getElementById('rsvp-form');
@@ -104,6 +119,8 @@ function enviarRSVP() {
     .then(() => {
         rsvpForm.classList.add('hidden');
         successMsg.classList.remove('hidden');
+        // Scroll para a mensagem de sucesso
+        successMsg.scrollIntoView({ behavior: 'smooth' });
     })
     .catch(err => {
         console.error("Erro ao salvar RSVP:", err);

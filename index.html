@@ -87,7 +87,7 @@
                     <!-- Gerado dinamicamente -->
                 </div>
                 
-                <button type="button" onclick="enviarRSVP()" id="btn-confirmar"
+                <button type="button" onclick="abrirModal()" id="btn-confirmar"
                     class="w-full mt-8 bg-[#d4af37] text-white py-4 rounded-sm font-serif-elegant tracking-[0.2em] uppercase text-sm hover:bg-[#c49b2c] transition-colors shadow-md">
                     Confirmar Presença
                 </button>
@@ -113,6 +113,26 @@
             <p class="text-[8px] tracking-[0.3em] uppercase">A & G • 2026</p>
         </footer>
 
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm p-8 rounded-sm shadow-2xl text-center border border-gray-100">
+            <h4 class="font-serif-elegant text-xl tracking-widest uppercase mb-4 text-[#d4af37]">Confirmar Presença?</h4>
+            <p class="text-xs text-gray-600 uppercase tracking-widest leading-relaxed mb-8">
+                Você deseja mesmo confirmar sua presença? 
+                <br><br>
+                <span class="text-red-500 font-bold">Aviso:</span> Pessoas que não foram selecionadas não poderão participar do casamento.
+            </p>
+            <div class="flex flex-col space-y-3">
+                <button onclick="confirmarEnvio()" class="w-full bg-[#d4af37] text-white py-3 rounded-sm font-serif-elegant tracking-[0.2em] uppercase text-xs hover:bg-[#c49b2c] transition-colors shadow-md">
+                    Sim, Confirmar
+                </button>
+                <button onclick="fecharModal()" class="w-full bg-white text-gray-400 py-3 rounded-sm font-serif-elegant tracking-[0.2em] uppercase text-xs border border-gray-100 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts Customizados -->
