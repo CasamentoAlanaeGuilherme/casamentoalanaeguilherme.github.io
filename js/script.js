@@ -32,11 +32,20 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function carregarConvidados() {
+    // Verificar se o prazo expirou (01/11/2026)
+    const deadline = new Date('2026-11-02T00:00:00'); // Início do dia 02 para incluir todo o dia 01
+    const agora = new Date();
+    const prazoExpirado = agora > deadline;
+
     fetch(`${API_URL}?id=${idFamilia}`)
         .then(res => res.json())
         .then(data => {
             listaConvidados = data;
-            renderizarFormulario();
+            if (prazoExpirado) {
+                exibirMensagemPrazo();
+            } else {
+                renderizarFormulario();
+            }
         })
         .catch(err => {
             console.error("Erro ao buscar dados:", err);
@@ -45,6 +54,13 @@ function carregarConvidados() {
                 loadingGuests.innerHTML = "<p class='text-red-400 text-xs uppercase'>Erro ao carregar dados. Tente recarregar a página.</p>";
             }
         });
+}
+
+function exibirMensagemPrazo() {
+    const loadingDiv = document.getElementById('loading-guests');
+    const deadlineMsg = document.getElementById('deadline-message');
+    if (loadingDiv) loadingDiv.classList.add('hidden');
+    if (deadlineMsg) deadlineMsg.classList.remove('hidden');
 }
 
 function renderizarFormulario() {
