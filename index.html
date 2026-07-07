@@ -21,7 +21,7 @@
     <!-- TELA INICIAL (SPLASH SCREEN) -->
     <div id="splash-screen" class="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6 text-center">
         <div class="mb-8">
-            <img src="Imagens/A&G.png" alt="A & G" class="w-24 md:w-48 h-auto">
+            <img src="Imagens/A&G.png" alt="A & G" class="w-20 md:w-32 h-auto">
         </div>
         
         <div class="relative cursor-pointer bow-animation" onclick="openInvitation()">
@@ -80,6 +80,13 @@
             
             <div id="loading-guests" class="text-center py-4">
                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37]"></div>
+            </div>
+
+            <!-- Mensagem de Prazo Encerrado -->
+            <div id="deadline-message" class="hidden text-center py-8 px-6 border border-dashed border-[#d4af37] rounded-sm bg-white">
+                <p class="text-xs text-gray-600 uppercase tracking-widest leading-relaxed">O prazo para confirmação de presença se encerrou em</p>
+                <p class="font-bold text-[#d4af37] text-xl my-4">01/11/2026.</p>
+                <p class="text-[10px] text-gray-400 uppercase">Para dúvidas, entre em contato com os noivos.</p>
             </div>
 
             <form id="rsvp-form" class="space-y-4 hidden">
